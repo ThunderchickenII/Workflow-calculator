@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Workflow Concepts AI Cost Calculator</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 20px; background: #f9f9f9; }
+        h2 { text-align: center; color: #0078d4; margin-bottom: 10px; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        .grid { display: grid; gap: 16px; }
+        @media (min-width: 768px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (min-width: 1100px) { .grid { grid-template-columns: repeat(3, 1fr); } }
+        .card { background: white; padding: 16px; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.1); transition: background 0.3s ease; }
+        .card.active { background: #d4edda; }
+        .card-header { font-weight: bold; font-size: 1.05em; color: #0078d4; margin-bottom: 8px; }
+        .input-row { display: flex; justify-content: space-between; align-items: center; margin: 6px 0; font-size: 0.95em; }
+        .input-row label { flex: 1; }
+        input { width: 100px; padding: 4px; font-size: 0.95em; }
+        .rate { color: #2e74b5; font-weight: 600; }
+        .cost { font-size: 1.1em; color: #107c10; }
+        .summary { background: #e6f2ff; padding: 20px; text-align: center; font-size: 1.5em; font-weight: bold; border-radius: 8px; margin-top: 20px; }
+        .note { text-align: center; font-size: 0.85em; color: #666; margin-top: 10px; }
+        .clear-btn { display: block; margin: 15px auto 0; padding: 10px 24px; background: #0078d4; color: white; border: none; border-radius: 6px; font-size: 1em; font-weight: 600; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        .clear-btn:hover { background: #106ebe; }
+        .cart-item { font-size: 0.9em; margin: 4px 0; display: flex; justify-content: space-between; }
+        .cart-total { font-weight: bold; margin-top: 8px; text-align: right; color: #107c10; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Workflow Concepts AI Cost Calculator</h2>
+        <p class="note">Enter volumes below. <strong>Tiered rates auto-apply.</strong> All rates from Cisco quote.</p>
+        <div class="grid">
+            <!-- WhatsApp -->
+            <div class="card">
+                <div class="card-header">WhatsApp</div>
+                <div class="input-row"><label>Conversations:</label> <input type="number" class="volume-input" id="waVol" value="5000" min="0"></div>
+                <div class="input-row"><span class="rate">$0.0080</span> per conversation</div>
+                <div class="input-row cost">Cost: <strong><span id="waCost">$40.00</span></strong></div>
+            </div>
+            <!-- Webchat -->
+            <div class="card">
+                <div class="card-header">Webchat</div>
+                <div class="input-row"><label>Sessions:</label> <input type="number" class="volume-input" id="webchatVol" value="3000" min="0"></div>
+                <div class="input-row"><span class="rate">$0.0050</span> per session</div>
+                <div class="input-row cost">Cost: <strong><span id="webchatCost">$15.00</span></strong></div>
+            </div>
+            <!-- Apple Business Chat (0-1000) -->
+            <div class="card">
+                <div class="card-header">Apple Business Chat (0-1000)</div>
+                <div class="input-row"><label>Messages:</label> <input type="number" class="volume-input" id="abc1000Vol" value="500" min="0"></div>
+                <div class="input-row"><span class="rate">$0.0100</span> per message</div>
+                <div class="input-row cost">Cost: <strong><span id="abc1000Cost">$5.00</span></strong></div>
+            </div>
+            <!-- Apple Business Chat (1000+) -->
+            <div class="card">
+                <div class="card-header">Apple Business Chat (1000+)</div>
+                <div class="input-row"><label>Messages:</label> <input type="number" class="volume-input" id="abc2Vol" value="1500" min="0"></div>
+                <div class="input-row"><span class="rate">$0.0080</span> per message</div>
+                <div class="input-row cost">Cost: <strong><span id="abc2Cost">$12.00</span></strong></div>
+            </div>
+            <!-- US SMS (Tiered) -->
+            <div class="card">
+                <div class="card-header">US SMS (Tiered)</div>
+                <div class="input-row"><label>Messages:</label> <input type="number" class="volume-input" id="smsVol" value="120000" min="0"></div>
+                <div class="input-row">Rate: <span id="smsRateDisplay" class="rate">$0.0050</span> per msg</div>
+                <div class="input-row cost">Cost: <strong><span id="smsCost">$600.00</span></strong></div>
+            </div>
+            <!-- MMS (Tiered) -->
+            <div class="card">
+                <div class="card-header">MMS (Tiered)</div>
+                <div class="input-row"><label>Messages:</label> <input type="number" class="volume-input" id="mmsVol" value="60000" min="0"></div>
+                <div class="input-row">Rate: <span id="mmsRateDisplay" class="rate">$0.0150</span> per msg</div>
+                <div class="input-row cost">Cost: <strong><span id="mmsCost">$900.00</span></strong></div>
+            </div>
+            <!-- Cisco AI Agents -->
+            <div class="card">
+                <div class="card-header">Cisco AI Agents</div>
+                <div class="input-row"><label>Sessions:</label> <input type="number" class="volume-input" id="aiAgentsVol" value="10" min="0"></div>
+                <div class="input-row"><span class="rate">$0.0500</span> per session</div>
+                <div class="input-row cost">Cost: <strong><span id="aiAgentsCost">$0.50</span></strong></div>
+            </div>
+            <!-- Cisco AI Assistant -->
+            <div class="card">
+                <div class="card-header">Cisco AI Assistant</div>
+                <div class="input-row"><label>Sessions:</label> <input type="number" class="volume-input" id="aiAssistVol" value="5" min="0"></div>
+                <div class="input-row"><span class="rate">$0.0400</span> per session</div>
+                <div class="input-row cost">Cost: <strong><span id="aiAssistCost">$0.20</span></strong></div>
+            </div>
+            <!-- Google Dialogflow CX Voice -->
+            <div class="card">
+                <div class="card-header">Google Dialogflow CX Voice</div>
+                <div class="input-row"><label>Sessions:</label> <input type="number" class="volume-input" id="dfVoiceVol" value="200" min="0"></div>
+                <div class="input-row"><span class="rate">$0.0720</span> per session</div>
+                <div class="input-row cost">Cost: <strong><span id="dfVoiceCost">$14.40</span></strong></div>
+            </div>
+            <!-- Google Dialogflow Text -->
+            <div class="card">
+                <div class="card-header">Google Dialogflow Text</div>
+                <div class="input-row"><label>Requests:</label> <input type="number" class="volume-input" id="dfTextVol" value="10000" min="0"></div>
+                <div class="input-row"><span class="rate">$0.0081</span> per request</div>
+                <div class="input-row cost">Cost: <strong><span id="dfTextCost">$81.00</span></strong></div>
+            </div>
+            <!-- 11 Labs Virtual Assistant -->
+            <div class="card">
+                <div class="card-header">11 Labs Virtual Assistant</div>
+                <div class="input-row"><label>Minutes:</label> <input type="number" class="volume-input" id="labsVol" value="500" min="0"></div>
+                <div class="input-row"><span class="rate">$0.0960</span> per minute</div>
+                <div class="input-row cost">Cost: <strong><span id="labsCost">$48.00</span></strong></div>
+            </div>
+            <!-- RCS Messages -->
+            <div class="card">
+                <div class="card-header">RCS Messages</div>
+                <div class="input-row"><label>Messages:</label> <input type="number" class="volume-input" id="rcsVol" value="2000" min="0"></div>
+                <div class="input-row"><span class="rate">$0.0190</span> per message</div>
+                <div class="input-row cost">Cost: <strong><span id="rcsCost">$38.00</span></strong></div>
+            </div>
+            <!-- ESTIMATED TAX CARD -->
+            <div class="card">
+                <div class="card-header">Estimated Tax</div>
+                <div class="input-row"><label>Tax Rate (%):</label> <input type="number" class="volume-input" id="taxRate" value="15" min="0" step="0.001"></div>
+                <div class="input-row cost">Tax: <strong><span id="taxCost">$262.97</span></strong></div>
+            </div>
+            <!-- SHOPPING CART CARD -->
+            <div class="card" id="cartCard">
+                <div class="card-header">Selected Services</div>
+                <div id="cartItems">No items selected</div>
+                <div class="cart-total">Cart Total: <strong><span id="cartTotal">$0.00</span></strong></div>
+            </div>
+        </div>
+        <div class="summary">
+            Subtotal: <span id="subtotal">$1,753.10</span><br>
+            <strong>Total (incl. Tax): <span id="total">$2,016.07</span></strong>
+        </div>
+        <button class="clear-btn" onclick="clearAll()">Clear All Inputs</button>
+    </div>
+
+    <script>
+        const serviceMap = {
+            waVol: { name: "WhatsApp", rate: 0.0080, unit: "conv" },
+            webchatVol: { name: "Webchat", rate: 0.0050, unit: "sess" },
+            abc1000Vol: { name: "Apple Business Chat (0-1000)", rate: 0.0100, unit: "msg" },
+            abc2Vol: { name: "Apple Business Chat (1000+)", rate: 0.0080, unit: "msg" },
+            smsVol: { name: "US SMS (Tiered)", rate: () => +document.getElementById('smsVol').value > 100000 ? 0.0050 : 0.0065, unit: "msg" },
+            mmsVol: { name: "MMS (Tiered)", rate: () => +document.getElementById('mmsVol').value > 50000 ? 0.0150 : 0.0180, unit: "msg" },
+            aiAgentsVol: { name: "Cisco AI Agents", rate: 0.0500, unit: "sess" },
+            aiAssistVol: { name: "Cisco AI Assistant", rate: 0.0400, unit: "sess" },
+            dfVoiceVol: { name: "Google Dialogflow CX Voice", rate: 0.0720, unit: "sess" },
+            dfTextVol: { name: "Google Dialogflow Text", rate: 0.0081, unit: "req" },
+            labsVol: { name: "11 Labs Virtual Assistant", rate: 0.0960, unit: "min" },
+            rcsVol: { name: "RCS Messages", rate: 0.0190, unit: "msg" }
+        };
+
+        document.querySelectorAll('.volume-input').forEach(input => {
+            input.addEventListener('input', () => { updateCardColor(input); updateCart(); calculate(); });
+        });
+
+        function updateCardColor(input) {
+            const card = input.closest('.card');
+            const value = parseFloat(input.value) || 0;
+            if (value > 0) card.classList.add('active');
+            else {
+                const allZero = Array.from(card.querySelectorAll('.volume-input')).every(i => (parseFloat(i.value) || 0) === 0);
+                if (allZero) card.classList.remove('active');
+            }
+        }
+
+        function updateCart() {
+            const cartItems = document.getElementById('cartItems');
+            const cartTotalEl = document.getElementById('cartTotal');
+            let items = [];
+            let cartTotal = 0;
+
+            Object.keys(serviceMap).forEach(id => {
+                const vol = parseFloat(document.getElementById(id).value) || 0;
+                if (vol > 0) {
+                    const service = serviceMap[id];
+                    const rate = typeof service.rate === 'function' ? service.rate() : service.rate;
+                    const cost = vol * rate;
+                    items.push(`<div class="cart-item"><span>${service.name}: ${vol.toLocaleString()} ${service.unit}</span><span>$${cost.toFixed(2)}</span></div>`);
+                    cartTotal += cost;
+                }
+            });
+
+            if (items.length === 0) {
+                cartItems.innerHTML = '<em>No items selected</em>';
+                document.getElementById('cartCard').classList.remove('active');
+            } else {
+                cartItems.innerHTML = items.join('');
+                document.getElementById('cartCard').classList.add('active');
+            }
+            cartTotalEl.textContent = '$' + cartTotal.toFixed(2);
+        }
+
+        function calculate() {
+            const wa = (parseFloat(document.getElementById('waVol').value) || 0) * 0.0080;
+            const webchat = (parseFloat(document.getElementById('webchatVol').value) || 0) * 0.0050;
+            const abc1000 = (parseFloat(document.getElementById('abc1000Vol').value) || 0) * 0.0100;
+            const abc2 = (parseFloat(document.getElementById('abc2Vol').value) || 0) * 0.0080;
+            const aiAgents = (parseFloat(document.getElementById('aiAgentsVol').value) || 0) * 0.0500;
+            const aiAssist = (parseFloat(document.getElementById('aiAssistVol').value) || 0) * 0.0400;
+            const dfVoice = (parseFloat(document.getElementById('dfVoiceVol').value) || 0) * 0.0720;
+            const dfText = (parseFloat(document.getElementById('dfTextVol').value) || 0) * 0.0081;
+            const labs = (parseFloat(document.getElementById('labsVol').value) || 0) * 0.0960;
+            const rcs = (parseFloat(document.getElementById('rcsVol').value) || 0) * 0.0190;
+            const smsVol = parseFloat(document.getElementById('smsVol').value) || 0;
+            const smsRate = smsVol > 100000 ? 0.0050 : 0.0065;
+            const sms = smsVol * smsRate;
+            const mmsVol = parseFloat(document.getElementById('mmsVol').value) || 0;
+            const mmsRate = mmsVol > 50000 ? 0.0150 : 0.0180;
+            const mms = mmsVol * mmsRate;
+
+            const subtotal = wa + webchat + abc1000 + abc2 + sms + mms + aiAgents + aiAssist + dfVoice + dfText + labs + rcs;
+            const taxRate = (parseFloat(document.getElementById('taxRate').value) || 0) / 100;
+            const tax = subtotal * taxRate;
+            const total = subtotal + tax;
+
+            document.getElementById('waCost').textContent = '$' + wa.toFixed(2);
+            document.getElementById('webchatCost').textContent = '$' + webchat.toFixed(2);
+            document.getElementById('abc1000Cost').textContent = '$' + abc1000.toFixed(2);
+            document.getElementById('abc2Cost').textContent = '$' + abc2.toFixed(2);
+            document.getElementById('smsCost').textContent = '$' + sms.toFixed(2);
+            document.getElementById('mmsCost').textContent = '$' + mms.toFixed(2);
+            document.getElementById('aiAgentsCost').textContent = '$' + aiAgents.toFixed(2);
+            document.getElementById('aiAssistCost').textContent = '$' + aiAssist.toFixed(2);
+            document.getElementById('dfVoiceCost').textContent = '$' + dfVoice.toFixed(2);
+            document.getElementById('dfTextCost').textContent = '$' + dfText.toFixed(2);
+            document.getElementById('labsCost').textContent = '$' + labs.toFixed(2);
+            document.getElementById('rcsCost').textContent = '$' + rcs.toFixed(2);
+            document.getElementById('smsRateDisplay').textContent = '$' + smsRate.toFixed(4);
+            document.getElementById('mmsRateDisplay').textContent = '$' + mmsRate.toFixed(4);
+            document.getElementById('subtotal').textContent = '$' + subtotal.toFixed(2);
+            document.getElementById('taxCost').textContent = '$' + tax.toFixed(2);
+            document.getElementById('total').textContent = '$' + total.toFixed(2);
+        }
+
+        function clearAll() {
+            document.querySelectorAll('input[type="number"]').forEach(input => {
+                input.value = input.id === 'taxRate' ? '15' : '0';
+                updateCardColor(input);
+            });
+            updateCart();
+            calculate();
+        }
+
+        document.querySelectorAll('.volume-input').forEach(updateCardColor);
+        updateCart();
+        calculate();
+    </script>
+</body>
+</html>
